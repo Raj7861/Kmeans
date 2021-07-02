@@ -1,4 +1,6 @@
 #include<iostream>
+#include <cstdlib>
+#include <iomanip>
 #include <ctime>     
 #include <fstream>
 #include <cstdlib>   
@@ -9,6 +11,8 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <mpi.h>
+
 
 
 using namespace std;
@@ -33,9 +37,10 @@ struct Point
     }
 
     double distance(Point p){
-        return abs(p.x - x) + abs(p.y - y);
+        return sqrt(pow((p.x - x),2) + pow((p.y - y),2));
     }
 };
+
 
 vector<Point> readcsv() {
     vector<Point> points;
@@ -62,15 +67,10 @@ void kMeansClustering(vector<Point>* points, int epochs, int k) {
     // The index of the centroid within the centroids vector
     // represents the cluster label.
     vector<Point> centroids;
-    //srand(time(0));
-    Point p;
+    srand(time(0));
     for (int i = 0; i < k; ++i) {
-        //centroids.push_back(points->at(rand() % 10));
-        //cout<<"Checking -> "<<centroids[i].x<<" "<<centroids[i].y<<endl;
+        centroids.push_back(points->at(rand() % n));
     }
-    centroids.push_back(points->at(0));
-    centroids.push_back(points->at(3));
-    centroids.push_back(points->at(6));
 
     for (int i = 0; i < epochs; ++i) {
         // For each centroid, compute distance from centroid to each point
@@ -86,7 +86,6 @@ void kMeansClustering(vector<Point>* points, int epochs, int k) {
                 if (dist < p.minDistance) {
                     p.minDistance = dist;
                     p.cluster = clusterId;
-                    //cout<<"tempDis ("<<dist<<") minDis("<<p.minDistance<<") "<<p.cluster<<endl;
                 }
                 *it = p;
             }
@@ -100,11 +99,11 @@ void kMeansClustering(vector<Point>* points, int epochs, int k) {
             sumX.push_back(0.0);
             sumY.push_back(0.0);
         }
-        int count=0;
+        
         // Iterate over points to append data to centroids
         for (vector<Point>::iterator it = points->begin(); it != points->end();
              ++it) {
-                  //This is 10;
+                
             int clusterId = it->cluster;
             nPoints[clusterId] += 1;
             sumX[clusterId] += it->x;
@@ -118,7 +117,6 @@ void kMeansClustering(vector<Point>* points, int epochs, int k) {
             int clusterId = c - begin(centroids);
             c->x = sumX[clusterId] / nPoints[clusterId];
             c->y = sumY[clusterId] / nPoints[clusterId];
-           // cout<<"X("<<c->x<<") Y("<<c->y<<") "<<endl;
         }
     }
 
@@ -131,30 +129,24 @@ void kMeansClustering(vector<Point>* points, int epochs, int k) {
          ++it) {
         myfile << it->x << ", " << it->y << " , " << it->cluster << endl;
     }
-
-
     myfile.close();
 }
 
 
 int main(){
 
+
+
+
 vector<Point>points;
-//srand((unsigned) time(0));
-// for(int i = 0;i<10;i++){
-// int r1 = rand()%10;
-// int r2 = rand()%10;
- 
-// points.push_back(p);
-// }
-points.push_back(Point(2,10));
-points.push_back(Point(2,5));
-points.push_back(Point(8,4));
-points.push_back(Point(5,8));
-points.push_back(Point(7,5));
-points.push_back(Point(6,4));
-points.push_back(Point(1,2));
-points.push_back(Point(4,9));
+srand((unsigned) time(0));
+for(int i = 0;i<20;i++){
+int r1 = rand()%20;
+int r2 = rand()%20;
+Point p(r1,r2);
+points.push_back(p);
+}
+
 for(auto i: points){
 cout << i.x << " "<< i.y <<endl;
 }

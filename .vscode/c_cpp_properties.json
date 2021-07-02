@@ -3,9 +3,10 @@
     {
       "name": "linux-gcc-x64",
       "includePath": [
-        "${workspaceFolder}/**"
+        "${workspaceFolder}/**",
+        "/usr/lib/x86_64-linux-gnu/openmpi/include"
       ],
-      "compilerPath": "gcc",
+      "compilerPath": "/usr/bin/mpic++",
       "cStandard": "${default}",
       "cppStandard": "${default}",
       "intelliSenseMode": "linux-gcc-x64",
